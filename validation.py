@@ -4,19 +4,6 @@ import torch
 from src import fcn_resnet50
 from train_utils import evaluate
 from my_dataset import GateSegmentation
-import transforms as T
-
-
-# class SegmentationPresetEval:
-#     def __init__(self, base_size, mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)):
-#         self.transforms = T.Compose([
-#             T.RandomResize(base_size, base_size),
-#             T.ToTensor(),
-#             T.Normalize(mean=mean, std=std),
-#         ])
-
-#     def __call__(self, img, target):
-#         return self.transforms(img, target)
 
 
 def main(args):
@@ -47,8 +34,7 @@ def parse_args():
     import argparse
     parser = argparse.ArgumentParser(description="pytorch fcn training")
 
-    # parser.add_argument("--data-path", default="/data/", help="VOCdevkit root")
-    parser.add_argument("--weights", default="./save_weights/model_2.pth")
+    parser.add_argument("--weights", default="./save_weights/model_1.pth")
     parser.add_argument("--num-classes", default=1, type=int)
     parser.add_argument("--aux", default=False, type=bool, help="auxilier loss")
     parser.add_argument("--device", default="cuda", help="training device")

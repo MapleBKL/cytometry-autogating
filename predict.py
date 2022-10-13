@@ -50,14 +50,6 @@ def main():
     # load image
     img = torch.as_tensor(np.load(img_path), dtype=torch.float)
     img = torch.permute(img, (2, 0, 1))
-
-    # from pil image to tensor and normalize
-    # data_transform = transforms.Compose([transforms.Resize(520),
-    #                                      transforms.ToTensor(),
-    #                                      transforms.Normalize(mean=(0.485, 0.456, 0.406),
-    #                                                           std=(0.229, 0.224, 0.225))])
-    # img = data_transform(original_img)
-    # expand batch dimension
     img = torch.unsqueeze(img, dim=0)
 
     model.eval()  # 进入验证模式

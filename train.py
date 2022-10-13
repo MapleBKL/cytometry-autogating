@@ -7,65 +7,10 @@ import torch
 from src import fcn_resnet50
 from train_utils import train_one_epoch, evaluate, create_lr_scheduler
 from my_dataset import GateSegmentation
-import transforms as T
 
 
-# class SegmentationPresetTrain:
-#     def __init__(self, base_size, crop_size, hflip_prob=0.5, mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)):
-#         min_size = int(0.5 * base_size)
-#         max_size = int(2.0 * base_size)
-
-#         trans = [T.RandomResize(min_size, max_size)]
-#         if hflip_prob > 0:
-#             trans.append(T.RandomHorizontalFlip(hflip_prob))
-#         trans.extend([
-#             T.RandomCrop(crop_size),
-#             T.ToTensor(),
-#             T.Normalize(mean=mean, std=std),
-#         ])
-#         self.transforms = T.Compose(trans)
-
-#     def __call__(self, img, target):
-#         return self.transforms(img, target)
-
-
-# class SegmentationPresetEval:
-#     def __init__(self, base_size, mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)):
-#         self.transforms = T.Compose([
-#             T.RandomResize(base_size, base_size),
-#             T.ToTensor(),
-#             T.Normalize(mean=mean, std=std),
-#         ])
-
-#     def __call__(self, img, target):
-#         return self.transforms(img, target)
-
-
-# def get_transform(train):
-#     base_size = 520
-#     crop_size = 480
-
-#     return SegmentationPresetTrain(base_size, crop_size) if train else SegmentationPresetEval(base_size)
-
-
-def create_model(aux, num_classes, pretrain=False):
+def create_model(aux, num_classes):
     model = fcn_resnet50(aux=aux, num_classes=num_classes)
-
-    if pretrain:
-        weights_dict = torch.load("./fcn_resnet50_coco.pth", map_location='cpu')
-
-        if num_classes != 21:
-            # 官方提供的预训练权重是21类(包括背景)
-            # 如果训练自己的数据集，将和类别相关的权重删除，防止权重shape不一致报错
-            for k in list(weights_dict.keys()):
-                if "classifier.4" in k:
-                    del weights_dict[k]
-
-        missing_keys, unexpected_keys = model.load_state_dict(weights_dict, strict=False)
-        if len(missing_keys) != 0 or len(unexpected_keys) != 0:
-            print("missing_keys: ", missing_keys)
-            print("unexpected_keys: ", unexpected_keys)
-
     return model
 
 
@@ -75,7 +20,7 @@ def main(args):
     # segmentation nun_classes + background
     num_classes = args.num_classes + 1
 
-    # 用来保存训练以及验证过程中信息
+    # log information during training and validation
     results_file = "results{}.txt".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
     train_dataset = GateSegmentation(mode="train")
@@ -115,7 +60,7 @@ def main(args):
 
     scaler = torch.cuda.amp.GradScaler() if args.amp else None
 
-    # 创建学习率更新策略，这里是每个step更新一次(不是每个epoch)
+    # create learning rate update scheduler, it updates every step instead of every epoch
     lr_scheduler = create_lr_scheduler(optimizer, len(train_loader), args.epochs, warmup=True)
 
     if args.resume:
@@ -137,7 +82,7 @@ def main(args):
         print(val_info)
         # write into txt
         with open(results_file, "a") as f:
-            # 记录每个epoch对应的train_loss、lr以及验证集各指标
+            # log information for every training epoch
             train_info = f"[epoch: {epoch}]\n" \
                          f"train_loss: {mean_loss:.4f}\n" \
                          f"lr: {lr:.6f}\n"
@@ -161,14 +106,13 @@ def parse_args():
     import argparse
     parser = argparse.ArgumentParser(description="pytorch fcn training")
 
-    # parser.add_argument("--data-path", default="/data/", help="VOCdevkit root")
+
     parser.add_argument("--num-classes", default=1, type=int)
     parser.add_argument("--aux", default=False, type=bool, help="auxilier loss")
     parser.add_argument("--device", default="cuda", help="training device")
     parser.add_argument("-b", "--batch-size", default=3, type=int)
     parser.add_argument("--epochs", default=10, type=int, metavar="N",
                         help="number of total epochs to train")
-
     parser.add_argument('--lr', default=0.0001, type=float, help='initial learning rate')
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                         help='momentum')
