@@ -9,12 +9,12 @@ class GateSegmentation(data.Dataset):
     def __init__(self, mode="train"):
         super(GateSegmentation, self).__init__()
         # Change the following directory according to your computer
-        root = "D:\ShenLab\Cytometry\preliminary_gating\plots"
+        root = "D:\ShenLab\Cytometry\preliminary_gating\images"
         if mode == "train":
-            self.image_dir = os.path.join(root, 'train')
+            self.image_dir = os.path.join(root, 'train_image')
             self.label_dir = os.path.join(root, 'train_label')
         elif mode == "val":
-            self.image_dir = os.path.join(root, 'val')
+            self.image_dir = os.path.join(root, 'val_image')
             self.label_dir = os.path.join(root, 'val_label')
 
         self.images = []

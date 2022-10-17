@@ -15,15 +15,17 @@ def time_synchronized():
     return time.time()
 
 
-def main():
+def main(args):
+    assert args.image is not None, "Must provide image filename."
     aux = False  # inference time not need aux_classifier
     classes = 1
-    weights_path = "./save_weights/model_6.pth"
-    img_path = "D:\ShenLab\Cytometry\preliminary_gating\plots\\val\\53.T2_Normalized.npy"
+    root = "./images/val_image"
+    weights_path = "./saved_weights/" + args.weights
+    img_path = root + args.image
     palette_path = "./palette.json"
-    assert os.path.exists(weights_path), f"weights {weights_path} not found."
-    assert os.path.exists(img_path), f"image {img_path} not found."
-    assert os.path.exists(palette_path), f"palette {palette_path} not found."
+    assert os.path.exists(weights_path), f"Weights {weights_path} not found."
+    assert os.path.exists(img_path), f"Image {img_path} not found."
+    assert os.path.exists(palette_path), f"Palette {palette_path} not found."
     with open(palette_path, "rb") as f:
         pallette_dict = json.load(f)
         pallette = []
@@ -52,7 +54,7 @@ def main():
     img = torch.permute(img, (2, 0, 1))
     img = torch.unsqueeze(img, dim=0)
 
-    model.eval()  # 进入验证模式
+    model.eval()  # enter evaluation mode
     with torch.no_grad():
         # init model
         img_height, img_width = img.shape[-2:]
@@ -66,10 +68,20 @@ def main():
 
         prediction = output['out'].argmax(1).squeeze(0)
         prediction = prediction.to("cpu").numpy().astype(np.uint8)
-        mask = Image.fromarray(prediction)
-        mask.putpalette(pallette)
-        mask.save("test_result.png")
+        np.save("prediction.npy", prediction)
+
+def parse_args():
+    import argparse
+    parser = argparse.ArgumentParser(description="pytorch fcn training")
+
+    parser.add_argument("-i", "--image", default=None, type=str, help="image filename")
+    parser.add_argument("-w", "--weights", default="model_0.pth", type=str)
+
+    args = parser.parse_args()
+    return args
 
 
 if __name__ == '__main__':
-    main()
+    args = parse_args()
+
+    main(args)

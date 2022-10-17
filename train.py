@@ -107,10 +107,10 @@ def parse_args():
     parser = argparse.ArgumentParser(description="pytorch fcn training")
 
 
-    parser.add_argument("--num-classes", default=1, type=int)
+    parser.add_argument("--num-classes", default=1, type=int)   # This should never be changed.
     parser.add_argument("--aux", default=False, type=bool, help="auxilier loss")
     parser.add_argument("--device", default="cuda", help="training device")
-    parser.add_argument("-b", "--batch-size", default=3, type=int)
+    parser.add_argument("-b", "--batch-size", default=5, type=int)
     parser.add_argument("--epochs", default=10, type=int, metavar="N",
                         help="number of total epochs to train")
     parser.add_argument('--lr', default=0.0001, type=float, help='initial learning rate')
@@ -135,7 +135,7 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    if not os.path.exists("./save_weights"):
-        os.mkdir("./save_weights")
+    if not os.path.exists("./saved_weights"):
+        os.mkdir("./saved_weights")
 
     main(args)
