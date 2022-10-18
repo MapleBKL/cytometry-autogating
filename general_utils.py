@@ -42,31 +42,39 @@ def axes_convert(df_numpy):
     return df_numpy
 
 
-def convert_to_image(dir_name, filename, mode):
+def convert_to_image(dir_name, filename, mode="visual"):
     """Read a data file and output a shrinked greyscale image for the dataset.
        The output image is a numpy array of shape (166, 166, 1).
        modes:
-       visual - to visualise the gate
+       visual (default) - to visualise the gate
        train - to produce an image for training
        label - to produce a label for the dataset
        """
     data = pd.read_csv(os.path.join(dir_name, filename))[["Ir191Di___191Ir_DNA1", "Event_length", "gate1_ir"]]
     data = axes_convert(data.to_numpy())
-    for cell in data:
-        ir191, el, gate1 = cell
-        ir191, el, gate1 = int(ir191), int(el), int(gate1)  # need to make sure these variables are integers
-        if mode == "visual" or "train":
-            image = np.zeros((166, 166, 1))
-            if mode == "visual":
+    
+    if mode == "visual" or mode == "train":
+        image = np.zeros((166, 166, 1))
+        if mode == "visual":
+            for cell in data:
+                ir191, el, gate1 = cell
+                ir191, el, gate1 = int(ir191), int(el), int(gate1)  # need to make sure these variables are integers
                 if gate1 == 0:
                     image[ir191, el, 0] = 128
                 elif gate1 == 1:
                     image[ir191, el, 0] = 255
-            elif mode == "train":
+        elif mode == "train":
+            for cell in data:
+                ir191, el, gate1 = cell
+                ir191, el, gate1 = int(ir191), int(el), int(gate1)  # need to make sure these variables are integers
                 image[ir191, el, 0] += 1
-            return image
-        elif mode == "label":
-            label = np.zeros((166, 166))
+        return image
+    elif mode == "label":
+        label = np.zeros((166, 166))
+        for cell in data:
+            ir191, el, gate1 = cell
+            ir191, el, gate1 = int(ir191), int(el), int(gate1)  # need to make sure these variables are integers
             if gate1 == 1:
                 label[ir191, el] = 1
-            return label
+        return label
+        
