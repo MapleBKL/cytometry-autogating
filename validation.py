@@ -34,7 +34,7 @@ def parse_args():
     import argparse
     parser = argparse.ArgumentParser(description="pytorch fcn training")
 
-    parser.add_argument("--weights", default="./save_weights/model_1.pth")
+    parser.add_argument("--weights", default="./save_weights/model_0.pth")
     parser.add_argument("--num-classes", default=1, type=int)
     parser.add_argument("--aux", default=False, type=bool, help="auxilier loss")
     parser.add_argument("--device", default="cuda", help="training device")
@@ -48,7 +48,7 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    if not os.path.exists("./save_weights"):
-        os.mkdir("./save_weights")
+    if not os.path.exists("./saved_weights"):
+        os.mkdir("./saved_weights")
 
     main(args)

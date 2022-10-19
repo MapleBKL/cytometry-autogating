@@ -43,8 +43,7 @@ def axes_convert(df_numpy):
 
 
 def convert_to_image(dir_name, filename, mode="visual"):
-    """Read a data file and output a shrinked greyscale image for the dataset.
-       The output image is a numpy array of shape (166, 166, 1).
+    """Convert the original csv files to images for visualising the gate, training, or GT labelling.
        modes:
        visual (default) - to visualise the gate
        train - to produce an image for training
@@ -77,4 +76,18 @@ def convert_to_image(dir_name, filename, mode="visual"):
             if gate1 == 1:
                 label[ir191, el] = 1
         return label
-        
+
+
+def compute_weights(train_label_path):
+    """Computes the ratio between the number of pixels labelled 0 and that of pixels labelled 1
+       for the entire training set."""
+    assert os.path.exists(train_label_path), "Training set not found."
+    num1 = 0
+    count = 0
+    for file in os.listdir(train_label_path):
+        count += 1
+        labels = np.load(os.path.join(train_label_path, file))
+        num1_ = np.count_nonzero(labels)
+        num1 += num1_
+    weight0 = num1 / (count * 27556)    # 27556 = 166^2
+    return np.array([weight0 * 10, 1 - weight0 * 10])

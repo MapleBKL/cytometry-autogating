@@ -3,9 +3,7 @@ import time
 import json
 
 import torch
-from torchvision import transforms
 import numpy as np
-from PIL import Image
 
 from src import fcn_resnet50
 
@@ -19,7 +17,7 @@ def main(args):
     assert args.image is not None, "Must provide image filename."
     aux = False  # inference time not need aux_classifier
     classes = 1
-    root = "./images/val_image"
+    root = "./images/val_image/"
     weights_path = "./saved_weights/" + args.weights
     img_path = root + args.image
     palette_path = "./palette.json"
@@ -68,6 +66,7 @@ def main(args):
 
         prediction = output['out'].argmax(1).squeeze(0)
         prediction = prediction.to("cpu").numpy().astype(np.uint8)
+        prediction = np.expand_dims(prediction, 2)
         np.save("prediction.npy", prediction)
 
 def parse_args():

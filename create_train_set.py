@@ -1,5 +1,3 @@
-from ctypes import sizeof
-from lib2to3.pytree import convert
 import os
 import random
 import pandas as pd
@@ -9,10 +7,15 @@ from general_utils import convert_to_image
 
 def main(args):
     val_size = args.val_size
-    root = "D:\ShenLab\Cytometry\omiq_exported_data_processed"
+    root = "../../omiq_exported_data_processed"
     files = os.listdir(root)
     val_indices = random.sample(range(len(files)), val_size)
+    print(f"The following {val_size} files will be the validation set:")
+    for i in range(val_size):
+        print(files[val_indices[i]])
+    print("--------------------------------------------------")
     
+    # Convert all the files in the root directory.
     for idx in range(len(files)):
         if idx % 10 == 0:
             print(f"converting {idx + 1}/{len(files)} files...")
@@ -30,7 +33,7 @@ def main(args):
 
 def parse_args():
     import argparse
-    parser = argparse.ArgumentParser(description="pytorch fcn training")
+    parser = argparse.ArgumentParser(description="create train/validation sets")
 
     parser.add_argument("-s", "--val-size", default=1, type=int, help="validation set size")
 
@@ -40,11 +43,11 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    if not os.path.exists("./images"):
-        os.mkdir("./images")
-        os.mkdir("./images/train_image")
-        os.mkdir("./images/train_label")
-        os.mkdir("./images/val_image")
-        os.mkdir("./images/val_label")
+    # The train/validation sets will be stored in the folders created below.
+    os.mkdir("./images")
+    os.mkdir("./images/train_image")
+    os.mkdir("./images/train_label")
+    os.mkdir("./images/val_image")
+    os.mkdir("./images/val_label")
 
     main(args)

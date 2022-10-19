@@ -8,8 +8,7 @@ import numpy as np
 class GateSegmentation(data.Dataset):
     def __init__(self, mode="train"):
         super(GateSegmentation, self).__init__()
-        # Change the following directory according to your computer
-        root = "D:\ShenLab\Cytometry\preliminary_gating\images"
+        root = "./images"
         if mode == "train":
             self.image_dir = os.path.join(root, 'train_image')
             self.label_dir = os.path.join(root, 'train_label')
