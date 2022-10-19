@@ -1,12 +1,20 @@
 import torch
 from torch import nn
+from general_utils import compute_weights
 import train_utils.distributed_utils as utils
 
 
+label_dir = "./images/train_label"
+
 def criterion(inputs, target):
+
+    weight = torch.as_tensor(compute_weights(label_dir), dtype=torch.float)
+    loss = nn.CrossEntropyLoss(weight=weight)
     losses = {}
     for name, x in inputs.items():
-        losses[name] = nn.functional.cross_entropy(x, target)
+        # losses[name] = nn.functional.cross_entropy(x, target)
+        losses[name] = loss(x, target)
+
 
     if len(losses) == 1:
         return losses['out']
@@ -18,9 +26,9 @@ def evaluate(model, data_loader, device, num_classes):
     model.eval()
     confmat = utils.ConfusionMatrix(num_classes)
     metric_logger = utils.MetricLogger(delimiter="  ")
-    header = 'Test:'
+    header = 'Test:'    
     with torch.no_grad():
-        for image, target in metric_logger.log_every(data_loader, 100, header):
+        for image, target in metric_logger.log_every(data_loader, 1, header):
             image, target = image.to(device), target.to(device)
             output = model(image)
             output = output['out']
