@@ -17,7 +17,7 @@ def main(args):
     assert args.image is not None, "Must provide image filename."
     aux = False  # inference time not need aux_classifier
     classes = 1
-    root = "./images/val_image/"
+    root = "./images/train_image/"
     weights_path = "./saved_weights/" + args.weights
     img_path = root + args.image
     palette_path = "./palette.json"

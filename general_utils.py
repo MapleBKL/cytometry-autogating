@@ -89,5 +89,5 @@ def compute_weights(train_label_path):
         labels = np.load(os.path.join(train_label_path, file))
         num1_ = np.count_nonzero(labels)
         num1 += num1_
-    weight0 = num1 / (count * 27556)    # 27556 = 166^2
-    return np.array([weight0 * 10, 1 - weight0 * 10])
+    weight1 = (1 - num1 / (count * 27556)) ** 3.5    # 27556 = 166^2
+    return np.array([1 - weight1, weight1])
