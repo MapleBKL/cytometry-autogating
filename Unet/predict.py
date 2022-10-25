@@ -83,7 +83,7 @@ def main(args):
                 ir191, el = file[idx]
                 ir191_c = int(ir191 * 10000 // 622)   # convert axes
                 el_c = int(el - 10)   # convert axes
-                pred_gate = prediction[ir191_c, el_c]   # predicted gating value
+                pred_gate = prediction[ir191_c, el_c].item()   # predicted gating value
                 gate_result[idx] = ir191, el, pred_gate
             gate_result = pd.DataFrame(gate_result, columns=["Ir191Di___191Ir_DNA1", "Event_length", "pred_gate_1"])
             gate_result.to_csv(f"prediction__{filename[:-4]}.csv")

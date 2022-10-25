@@ -42,14 +42,14 @@ def axes_convert(df_numpy):
     return df_numpy
 
 
-def convert_to_image(dir_name, filename, mode="visual"):
+def convert_to_image(dir_name, filename, gate_name="gate1_ir", mode="visual"):
     """Convert the original csv files to images for visualising the gate, training, or GT labelling.
        modes:
        visual (default) - to visualise the gate
        train - to produce an image for training
        label - to produce a label for the dataset
        """
-    data = pd.read_csv(os.path.join(dir_name, filename))[["Ir191Di___191Ir_DNA1", "Event_length", "gate1_ir"]]
+    data = pd.read_csv(os.path.join(dir_name, filename))[["Ir191Di___191Ir_DNA1", "Event_length", gate_name]]
     data = axes_convert(data.to_numpy())
     
     if mode == "visual" or mode == "train":
@@ -94,4 +94,20 @@ def compute_weights(train_label_path):
     return np.array([1 - weight1, weight1])
 
 
-def compute_iou(filename):
+def compute_iou(file):
+    """Computes the IOU value of the predicted gate_1 according to the following equation:
+       IOU = |{pred_in_gate}\cap {actual_in_gate}| / |{pred_in_gate}\cup {actual_in_gate}|
+       The closer to 1, the better."""
+    if file.endswith(".npy") or file.endswith(".csv"):
+        raise ValueError("Do not include the file extension.")
+    # load the files
+    pred_gate = pd.read_csv(f"prediction__{file}.csv")["pred_gate_1"]
+    actual_gate = pd.read_csv(f"../omiq_exported_data_processed/{file}.csv")["gate1_ir"]
+    intersection, union = 0, 0
+    for idx in range(pred_gate.size):
+        if pred_gate[idx] == 1 or actual_gate[idx] == 1:
+            union += 1
+        if pred_gate[idx] == 1 and actual_gate[idx] == 1:
+            intersection += 1
+    print(f"{file} gate 1 prediction IOU = {intersection / union}")
+
