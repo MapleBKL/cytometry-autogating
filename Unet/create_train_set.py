@@ -19,8 +19,8 @@ def main(args):
     for idx in range(len(files)):
         if idx % 10 == 0:
             print(f"converting {idx + 1}/{len(files)} files...")
-        image = convert_to_image(root, files[idx], "train")
-        label = convert_to_image(root, files[idx], "label")
+        image = convert_to_image(root, files[idx], mode="train")
+        label = convert_to_image(root, files[idx], mode="label")
         filename = files[idx][:-4]
         if idx in val_indices:
             np.save(f"./images/val_image/{filename}.npy", image)

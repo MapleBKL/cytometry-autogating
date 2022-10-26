@@ -73,7 +73,8 @@ def main(args):
         prediction = output['out'].argmax(1).squeeze(0)
         prediction = prediction.to("cpu").numpy().astype(np.uint8)
         prediction = np.expand_dims(prediction, 2)
-        np.save(f"prediction__{filename[:-4]}.npy", prediction)    # save a prediction image
+        # save an image of the predicted gate (only ROI)
+        np.save(f"./prediction_results/images/prediction__{filename[:-4]}.npy", prediction)
 
         # if pass in a csv file, we also save the gating result
         if args.filename:
@@ -86,7 +87,7 @@ def main(args):
                 pred_gate = prediction[ir191_c, el_c].item()   # predicted gating value
                 gate_result[idx] = ir191, el, pred_gate
             gate_result = pd.DataFrame(gate_result, columns=["Ir191Di___191Ir_DNA1", "Event_length", "pred_gate_1"])
-            gate_result.to_csv(f"prediction__{filename[:-4]}.csv")
+            gate_result.to_csv(f"./prediction_results/labels/prediction__{filename[:-4]}.csv", index=False)
 
 
 def parse_args():
@@ -103,4 +104,10 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
+
+    if not os.path.exists("./prediction_results"):
+        os.mkdir("./prediction_results")
+        os.mkdir("./prediction_results/images")
+        os.mkdir("./prediction_results/labels")
+
     main(args)
