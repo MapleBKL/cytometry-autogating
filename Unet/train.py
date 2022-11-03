@@ -19,13 +19,15 @@ def main(args):
     batch_size = args.batch_size
     # segmentation nun_classes + background
     num_classes = args.num_classes + 1
+    gate = args.gate
+    assert gate == 1 or gate == 2, print("Provide a gate: either 1 or 2")
 
     # log information during training and validation
     results_file = "results{}.txt".format(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
 
-    train_dataset = GateSegmentation(mode="train")
+    train_dataset = GateSegmentation(gate=gate, mode="train")
 
-    val_dataset = GateSegmentation(mode="val")
+    val_dataset = GateSegmentation(gate=gate, mode="val")
 
     num_workers = min([os.cpu_count(), batch_size if batch_size > 1 else 0, 8])
     train_loader = torch.utils.data.DataLoader(train_dataset,
@@ -98,9 +100,15 @@ def main(args):
             save_file["scaler"] = scaler.state_dict()
 
         if args.save_best is True:
-            torch.save(save_file, "saved_weights/best_model.pth")
+            if gate == 1:
+                torch.save(save_file, f"saved_weights/gate_1/best_model.pth")
+            else:
+                torch.save(save_file, f"saved_weights/gate_2/best_model.pth")
         else:
-            torch.save(save_file, "saved_weights/model_{}.pth".format(epoch))
+            if gate == 1:
+                torch.save(save_file, "saved_weights/gate_1/model_{}.pth".format(epoch))
+            else:
+                torch.save(save_file, "saved_weights/gate_2/model_{}.pth".format(epoch))
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
@@ -109,15 +117,14 @@ def main(args):
 
 def parse_args():
     import argparse
-    parser = argparse.ArgumentParser(description="pytorch unet training")
+    parser = argparse.ArgumentParser(description="unet cytometry autogating")
 
-    # exclude background
-    parser.add_argument("--num-classes", default=1, type=int)
+    parser.add_argument("-g", "--gate", default=0, type=int)
+    parser.add_argument("--num-classes", default=1, type=int)   # don't change
     parser.add_argument("--device", default="cuda", help="training device")
     parser.add_argument("-b", "--batch-size", default=4, type=int)
-    parser.add_argument("--epochs", default=200, type=int, metavar="N",
+    parser.add_argument("--epochs", default=50, type=int, metavar="N",
                         help="number of total epochs to train")
-
     parser.add_argument('--lr', default=0.01, type=float, help='initial learning rate')
     parser.add_argument('--momentum', default=0.9, type=float, metavar='M',
                         help='momentum')
@@ -129,7 +136,6 @@ def parse_args():
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                         help='start epoch')
     parser.add_argument('--save-best', default=True, type=bool, help='only save best dice weights')
-    # Mixed precision training parameters
     parser.add_argument("--amp", default=False, type=bool,
                         help="Use torch.cuda.amp for mixed precision training")
 
@@ -143,5 +149,7 @@ if __name__ == '__main__':
 
     if not os.path.exists("./saved_weights"):
         os.mkdir("./saved_weights")
+        os.mkdir("./saved_weights/gate_1")
+        os.mkdir("./saved_weights/gate_2")
 
     main(args)

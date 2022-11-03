@@ -6,9 +6,9 @@ import numpy as np
 
 
 class GateSegmentation(data.Dataset):
-    def __init__(self, mode="train"):
+    def __init__(self, gate=0, mode="train"):
         super(GateSegmentation, self).__init__()
-        root = "./images"
+        root = f"./images/gate_{gate}"
         if mode == "train":
             self.image_dir = os.path.join(root, 'train_image')
             self.label_dir = os.path.join(root, 'train_label')
