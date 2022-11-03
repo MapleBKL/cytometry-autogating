@@ -125,12 +125,12 @@ def compute_weights(train_label_path):
 
 
 def compute_iou(file):
-    """Computes the IOU value of the predicted gate_1 according to the following equation:
+    """Computes the IOU values of the predicted gates according to the following equation:
        IOU = |{pred_in_gate}\cap {actual_in_gate}| / |{pred_in_gate}\cup {actual_in_gate}|
        The closer to 1, the better."""
     if file.endswith(".csv"):
         file = file[:-4]
-    # load the files
+    
     pred_gate_1 = pd.read_csv(f"./prediction_results/prediction__{file}.csv")["gate1_ir"]
     actual_gate_1 = pd.read_csv(f"../omiq_exported_data_processed/{file}.csv")["gate1_ir"]
     intersection, union = 0, 0
@@ -153,6 +153,41 @@ def compute_iou(file):
 
     print(f"{file} gate 1 prediction IOU = {iou_1}")
     print(f"{file} gate 2 prediction IOU = {iou_2}")
+
+def compute_dice(file):
+    """Computes the dice coefficients of the predicted gates according to the following equation:
+       dice = 2*|{pred_in_gate}\cap {actual_in_gate}|/(|{pred_in_gate}|+|{actual_in_gate}|)
+       The closer to 1, the better."""
+    if file.endswith(".csv"):
+        file = file[:-4]
+
+    pred_gate_1 = pd.read_csv(f"./prediction_results/prediction__{file}.csv")["gate1_ir"]
+    actual_gate_1 = pd.read_csv(f"../omiq_exported_data_processed/{file}.csv")["gate1_ir"]
+    intersection, pred_in_gate, actual_in_gate = 0, 0, 0
+    for idx in range(pred_gate_1.size):
+        if pred_gate_1[idx] == 1:
+            pred_in_gate += 1
+        if actual_gate_1 == 1:
+            actual_in_gate += 1
+        if pred_gate_1[idx] == 1 and actual_gate_1[idx] == 1:
+            intersection += 1
+    dice_1 = 2 * intersection / (pred_in_gate + actual_in_gate)
+
+    pred_gate_2 = pd.read_csv(f"./prediction_results/prediction__{file}.csv")["gate2_cd45"]
+    actual_gate_2 = pd.read_csv(f"../omiq_exported_data_processed/{file}.csv")["gate2_cd45"]
+    intersection, pred_in_gate, actual_in_gate = 0, 0, 0
+    for idx in range(pred_gate_2.size):
+        if pred_gate_2[idx] == 1:
+            pred_in_gate += 1
+        if actual_gate_2 == 1:
+            actual_in_gate += 1
+        if pred_gate_2[idx] == 1 and actual_gate_2[idx] == 1:
+            intersection += 1
+    dice_2 = 2 * intersection / (pred_in_gate + actual_in_gate)
+
+    print(f"{file} gate 1 dice coefficient = {dice_1}")
+    print(f"{file} gate 2 dice coefficient = {dice_2}")
+
 
 def plot_diff(file, gate):
     if gate == 1:
