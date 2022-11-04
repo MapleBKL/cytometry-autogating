@@ -10,22 +10,22 @@ To use the code, please download this folder (not the entire repository, as we w
 │   │	...
 │   
 └───Unet
-	|	gen_image_label.py
-	|	general_utils.py
-	|	my_dataset.py
-	|	predict.py
-	|	train.py
-	|	visualize.py
-	|
+    |	gen_image_label.py
+    |	general_utils.py
+    |	my_dataset.py
+    |	predict.py
+    |	train.py
+    |	visualize.py
+    |
     └───src
-	|   |	__init__.py
-	|   |	unet.py
+    |   |    __init__.py
+    |   |    unet.py
     │
     └───train_utils
-    	|	__init__.py
-    	|	dice_coefficient_loss.py
-    	|	distributed_utils.py
-    	|	train_and_eval.py
+    	|    __init__.py
+    	|    dice_coefficient_loss.py
+    	|    distributed_utils.py
+    	|    train_and_eval.py
 ```
 Most of the code uses relative path, except for one place. In `visualize.py`, make sure you change the `pred_root` and `label_root` (at the beginning of the main function) to fit your computer.  
 </br>
@@ -81,19 +81,19 @@ Unet
 |	...
 └───all_images
     └───gate_1
-	|   └───image
-	|	|	|	01.T1_Normalized.npy
-	|	|	|	...
-	|	└───label
-	|	|	|	01.T1_Normalized.npy
-	|	|	|	...
+    |   └───image
+    |	|    |    01.T1_Normalized.npy
+    |	|    |    ...
+    |    └───label
+    |	|    |    01.T1_Normalized.npy
+    |	|    |    ...
     └───gate_2
         └───image
-		|	|	01.T1_Normalized.npy
-		|	|	...
-		└───label
-		|	|	01.T1_Normalized.npy
-		|	|	...
+	|    |    01.T1_Normalized.npy
+	|    |    ...
+	└───label
+	|    |    01.T1_Normalized.npy
+	|    |    ...
 ```
 In addition, you can pass in the argument `-g 1` or `-g 2` (equivalently, `--gate 1` or `--gate 2`) to specify a gate. If `-g 1` is passed in, only images and masks for gate 1 will be generated, the same goes for gate 2. By default, images and masks for both gates will be generated.
 
@@ -175,7 +175,7 @@ The input file should be a .csv file with at least four columns:
 
 ### The output file
 The first time you run the `predict.py` programme, a new folder named `prediction_results` will be created under the `Unet` directory. All subsequent autogating results will be saved in this folder. After the network autogates the input file, a .csv file will be generated and saved under the `Unet/prediction_results` directory. It will be named "prediction__{filename}.csv". For example, if you autogate the input file "01.T1_Normalized.csv", then the autogating results will be saved in the output file "prediction__01.T1_Normalized.csv". The output file contains six columns:
-| Ir191Di___191Ir_DNA1 | Event_length | Ir193Di___193Ir_DNA2 | Y89Di___89Y_DNA2 | gate1_ir | gate2_cd45 |
+| Ir191Di___191Ir_DNA1 | Event_length | Ir193Di___193Ir_DNA2 | Y89Di___89Y_CD45 | gate1_ir | gate2_cd45 |
 | --- | --- | --- | --- | --- | --- |
 |6.9935 | 36 | 7.5951 | 5.9978 | 1 | 1 |
 |5.5613 | 26 | 6.0384 | 2.326 | 0 | 0 |
