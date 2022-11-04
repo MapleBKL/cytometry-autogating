@@ -161,8 +161,7 @@ def parse_args():
     parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                         help='start epoch')
     parser.add_argument('--save-best', action=argparse.BooleanOptionalAction, help='only save best dice weights')
-    parser.add_argument("--amp", action=argparse.BooleanOptionalAction,
-                        help="Use torch.cuda.amp for mixed precision training")
+    parser.add_argument("--amp", default=False, type=bool, help="Use torch.cuda.amp for mixed precision training")
 
     args = parser.parse_args()
 
