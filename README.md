@@ -1,7 +1,7 @@
 # Autogating (gate 1 & 2) with U-Net
 We use [U-Net](https://en.wikipedia.org/wiki/U-Net) to perform cytometry autogating for gate 1 and gate 2. The base code for U-Net training is adapted from [this repository](https://github.com/WZMIAOMIAO/deep-learning-for-image-processing/tree/master/pytorch_segmentation/unet). Please make sure you have Python 3.8+ and Pytorch 1.10+ to run the code.
 ## Setup and file structure
-To use the code, please download this folder (not the entire repository, as we won't use the FCN) to the directory with the folder containing all the original csv files. Note that the folder containing the csv files is assumed to be named `omiq_exported_data_processed`, otherwise you need to change the code in `gen_image_label.py`, `general_utils.py`, `predict.py`, and `visualize.py` accordingly. Below is the correct placement:
+To use the code, please download the [Unet](https://github.com/MapleBKL/cytometry-autogating/tree/main/Unet) folder to the directory with the folder containing all the original csv files. Note that the folder containing the csv files is assumed to be named `omiq_exported_data_processed`, otherwise you need to change the code in `gen_image_label.py`, `general_utils.py`, `predict.py`, and `visualize.py` accordingly. Below is the correct placement:
 ```
 .
 └───omiq_exported_data_processed
