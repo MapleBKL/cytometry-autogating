@@ -92,8 +92,8 @@ Unet
 	|    |    01.T1_Normalized.npy
 	|    |    ...
 	└───label
-	|    |    01.T1_Normalized.npy
-	|    |    ...
+	     |    01.T1_Normalized.npy
+	     |    ...
 ```
 In addition, you can pass in the argument `-g 1` or `-g 2` (equivalently, `--gate 1` or `--gate 2`) to specify a gate. If `-g 1` is passed in, only images and masks for gate 1 will be generated, the same goes for gate 2. By default, images and masks for both gates will be generated.
 
@@ -104,19 +104,19 @@ Unet
 |	...
 └───images
     └───gate_1
-	|   └───train_image
-	|   └───train_label
-	|   └───val_image
-	|   └───val_label
-	|   └───test_image
-	|   └───test_label
+    |   └───train_image
+    |   └───train_label
+    |   └───val_image
+    |   └───val_label
+    |   └───test_image
+    |   └───test_label
     └───gate_2
-	    └───train_image
-	    └───train_label
-	    └───val_image
-	    └───val_label
-	    └───test_image
-	    └───test_label
+        └───train_image
+        └───train_label
+        └───val_image
+        └───val_label
+        └───test_image
+        └───test_label
 ```
 Select the images and the corresponding masks you want to use for validation or testing, and move them to the proper folders. Then move the rest of the images and masks to the folders labelled for training. Since this step is done manually, there is a chance that you might make a mistake. Don't worry, before training begins, there is a verification procedure that will tell you if you make any mistake.
 
